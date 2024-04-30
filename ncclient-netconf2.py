@@ -5,6 +5,7 @@ from ncclient import manager
 import xml.dom.minidom
 import getpass
 import re
+import requests
 
 # Allow the user to define credentials and verify they appear valid
 def credential_valid():
@@ -168,5 +169,16 @@ netconf_loopback3 = """
 netconf_reply = m.edit_config(target="running", config=netconf_loopback3)
 print(xml.dom.minidom.parseString(netconf_reply.xml).toprettyxml())
 
-
+#Sends a webex message to confirm router was updated
+access_token = input ('Please provide your Webex access token:')
+room_id = input ('Please provide the room ID:')
+message = 'Your router has been updated!'
+url = 'https://webexapis.com/v1/messages'
+headers = {
+    'Authorization': 'Bearer {}'.format(access_token),
+    'Content-Type': 'application/json'
+}
+params = {'roomId': room_id, 'markdown': message}
+res = requests.post(url, headers=headers, json=params)
+print(res.json())
 
