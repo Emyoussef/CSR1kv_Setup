@@ -165,7 +165,26 @@ netconf_loopback3 = """
 </native>
 </config>
 """
-netconf_reply = m.edit_config(target="running", config=netconf_loopback3)
+netconf_ipv6 = """
+<config>
+<native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+<interface>
+<GigabitEthernet>
+<name>1</name> <!-- Interface identifier, adjust as needed -->
+<ipv6>
+<address>
+<prefix-list>
+<prefix>2001:DB8::1/64</prefix> <!-- IPv6 address and subnet prefix length -->
+</prefix-list>
+</address>
+</ipv6>
+</GigabitEthernet>
+</interface>
+</native>
+</config>
+"""
+
+netconf_reply = m.edit_config(target="running", config=netconf_ipv6)
 print(xml.dom.minidom.parseString(netconf_reply.xml).toprettyxml())
 
 
