@@ -2,6 +2,7 @@
 
 #import required modules
 from ncclient import manager
+import ipaddress
 import xml.dom.minidom
 import getpass
 import re
