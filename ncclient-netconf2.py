@@ -7,11 +7,6 @@ import getpass
 import re
 import requests
 
-#Starting running configuration
-ssh 192.168.56.101
-enable
-print'show ip interface brief'
-
 # Allow the user to define credentials and verify they appear valid
 def credential_valid():
       
