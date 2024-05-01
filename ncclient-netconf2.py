@@ -7,6 +7,10 @@ import getpass
 import re
 import requests
 
+#Starting running configuration
+ssh 192.168.56.101
+enable
+print'show ip interface brief'
 
 # Allow the user to define credentials and verify they appear valid
 def credential_valid():
@@ -82,11 +86,11 @@ netconf_filter = """
 <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native" />
 </filter>
 """
-initial_netconf_config = m.get_config(source="running", filter=netconf_filter).data_xml
+netconf_config = str(m.get_config(source="running", filter=netconf_filter))
 
 # Pull the current hostname from the netconf_config and present it to the user
-cur_hostname = re.search('(?<=<hostname>)(.*)(?=</hostname>)', initial_netconf_config)
-print("The current hostname is:", cur_hostname.group())
+cur_hostname = re.search('(?<=<hostname>)(.*)(?=</hostname>)', netconf_config)
+print("The current hostname is:",cur_hostname.group())
 
 # Ask the user if they want to change it to the stored hostname
 name_select = str(input("Do you want to change it to 'super.router'? "))
@@ -100,7 +104,7 @@ if name_select.lower()[0] == 'y':
 """
     netconf_reply = m.edit_config(target="running", config=netconf_hostname)
 else:
-    print("Leaving hostname", cur_hostname.group())
+    print("Leaving hostname",cur_hostname.group())
 
 
 netconf_loopback = """
@@ -168,20 +172,11 @@ netconf_loopback3 = """
 </config>
 """
 netconf_reply = m.edit_config(target="running", config=netconf_loopback3)
+print(xml.dom.minidom.parseString(netconf_reply.xml).toprettyxml())
 
-# Store the final running configuration after making the changes
-final_netconf_config = m.get_config(source="running", filter=netconf_filter).data_xml
-
-# Print the initial and final configurations
-print("\nInitial Running Configuration:")
-print(initial_netconf_config)
-
-print("\nFinal Running Configuration:")
-print(final_netconf_config)
-
-# Sends a webex message to confirm router was updated
-access_token = input('Please provide your Webex access token:')
-room_id = input('Please provide the room ID:')
+#Sends a webex message to confirm router was updated
+access_token = input ('Please provide your Webex access token:')
+room_id = input ('Please provide the room ID:')
 message = 'Your router has been updated!'
 url = 'https://webexapis.com/v1/messages'
 headers = {
