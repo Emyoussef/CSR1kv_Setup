@@ -167,7 +167,17 @@ netconf_loopback3 = """
 </config>
 """
 netconf_reply = m.edit_config(target="running", config=netconf_loopback3)
-print(xml.dom.minidom.parseString(netconf_reply.xml).toprettyxml())
+
+# Store the final running configuration after making the changes
+final_netconf_config = m.get_config(source="running", filter=netconf_filter).data_xml
+
+# Print the initial and final configurations
+print("\nInitial Running Configuration:")
+print(xml.dom.minidom.parseString(initial_netconf_config).toprettyxml())
+
+print("\nFinal Running Configuration:")
+print(xml.dom.minidom.parseString(final_netconf_config).toprettyxml())
+
 
 #Sends a webex message to confirm router was updated
 access_token = input ('Please provide your Webex access token:')
